@@ -3,45 +3,25 @@ from models import Task
 from schemas import TaskCreate, TaskUpdate
 
 
-def get_tasks(db: Session):
-    """
-    Input:
-        db: database session
-    Output:
-        List all tasks
-    """
-    # TODO: El vostre codi va aqui
-    pass
 
 
-def create_tasks(db: Session, task: TaskCreate):
-    """
-    Input:
-        db: database session
-    Output:
-        Return the new task
-    """
-    # TODO: El vostre codi va aqui
-    pass
+# Actualitzar una tasca
+@app.route("/tasks/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    data = request.get_json()
+    with sqlite3.connect("tasks.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE tasks SET title = ?, description = ?, done = ? WHERE id = ?",
+                               (data["title"], data.get("description", ""), data["done"], task_id))
+        conn.commit()
+    return jsonify({"message": "Task updated"})
 
 
-def update_tasks(db: Session, task_id: int, task_update: TaskUpdate):
-    """
-    Input:
-        db: database session
-    Output:
-        Updated some task fields
-    """
-    # TODO: El vostre codi va aqui
-    pass
-
-
-def delete_tasks(db: Session, task_id: int):
-    """
-    Input:
-        db: database session
-    Output:
-        Return delete task
-    """
-    # TODO: El vostre codi va aqui
-    pass
+# Eliminar una tasca
+@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    with sqlite3.connect("tasks.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        conn.commit()
+    return jsonify({"message": "Task deleted"})
