@@ -1,22 +1,17 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, ConfigDict
 
 class TaskBase(BaseModel):
     title: str
     description: str
 
-
 class TaskCreate(TaskBase):
     pass
 
-
 class TaskUpdate(TaskBase):
     completed: bool
-
 
 class TaskResponse(TaskBase):
     id: int
     completed: bool
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
